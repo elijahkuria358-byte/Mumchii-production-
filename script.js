@@ -52,9 +52,16 @@ function payViaMpesa() {
     }
 }
 
-// Payment Button Click Handler
+// Payment Button Click Handler for Individual Scripts
 function makePayment(planName, amount) {
     const message = `Hi Mumchi Production, I'm interested in the ${planName} for KES ${amount}/month. Please send me payment details.`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/254769629975?text=${encodedMessage}`, '_blank');
+}
+
+// Payment Button Click Handler for Packages
+function makePackagePayment(packageName, priceRange) {
+    const message = `Hi Mumchi Production, I'm interested in the ${packageName} (KES ${priceRange}). Please send me more details and payment information.`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/254769629975?text=${encodedMessage}`, '_blank');
 }
@@ -80,11 +87,9 @@ document.querySelectorAll('.preview-locked').forEach(element => {
     element.addEventListener('click', function() {
         // Find the parent script card
         const scriptCard = this.closest('.script-card');
-        const scriptId = scriptCard.querySelector('.unlock-btn').onclick.toString().match(/\d+/)[0];
-        const amount = scriptCard.querySelector('.script-price').textContent;
-        
-        // Show hint
-        alert(`Click "Unlock Full Script" button to unlock this preview and view the complete script!`);
+        if (scriptCard) {
+            alert(`Click "Unlock Script" button to unlock this preview and view the complete script!`);
+        }
     });
 });
 
@@ -104,7 +109,7 @@ const observer = new IntersectionObserver(function(entries) {
 }, observerOptions);
 
 // Observe service cards, portfolio items, pricing cards, and script cards
-document.querySelectorAll('.service-card, .portfolio-item, .stat, .pricing-card, .payment-card, .script-card').forEach(el => {
+document.querySelectorAll('.service-card, .portfolio-item, .stat, .package-card, .payment-card, .script-card').forEach(el => {
     observer.observe(el);
 });
 
@@ -124,4 +129,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-console.log('Mumchi Production website with pay-to-unlock script system loaded successfully!');
+console.log('Mumchi Production website with new pricing packages loaded successfully!');
