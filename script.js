@@ -12,6 +12,32 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Unlock Script Preview Function
+function unlockScript(scriptId, amount) {
+    const previewLocked = document.getElementById(`preview${scriptId}`);
+    const previewContent = document.getElementById(`content${scriptId}`);
+    
+    if (previewContent.classList.contains('hidden')) {
+        const message = `Hi Mumchi Production, I want to unlock script ${scriptId} for KES ${amount}. Please send payment details.`;
+        const encodedMessage = encodeURIComponent(message);
+        
+        // Show loading state
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        // Open WhatsApp
+        setTimeout(() => {
+            window.open(`https://wa.me/254769629975?text=${encodedMessage}`, '_blank');
+            // Animate unlock
+            previewLocked.style.display = 'none';
+            previewContent.classList.remove('hidden');
+            btn.innerHTML = '<i class="fas fa-check"></i> Script Unlocked!';
+            btn.style.background = '#25d366';
+        }, 500);
+    }
+}
+
 // M-Pesa Payment Function
 function payViaMpesa() {
     const phone = prompt('Enter your M-Pesa phone number (e.g., 254769629975):');
@@ -39,13 +65,28 @@ if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const name = this.querySelector('input[type="text"]').value;
-        const message = `Hi Mumchi Production, my name is ${name}. ${this.querySelector('textarea').value}`;
+        const email = this.querySelector('input[type="email"]').value;
+        const phone = this.querySelector('input[type="tel"]').value;
+        const message = `Hi Mumchi Production, my name is ${name}. Email: ${email}, Phone: ${phone}\n\nMessage: ${this.querySelector('textarea').value}`;
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/254769629975?text=${encodedMessage}`, '_blank');
         alert('Thank you! Opening WhatsApp to connect with us...');
         this.reset();
     });
 }
+
+// Script preview unlock animation
+document.querySelectorAll('.preview-locked').forEach(element => {
+    element.addEventListener('click', function() {
+        // Find the parent script card
+        const scriptCard = this.closest('.script-card');
+        const scriptId = scriptCard.querySelector('.unlock-btn').onclick.toString().match(/\d+/)[0];
+        const amount = scriptCard.querySelector('.script-price').textContent;
+        
+        // Show hint
+        alert(`Click "Unlock Full Script" button to unlock this preview and view the complete script!`);
+    });
+});
 
 // Scroll animation for elements
 const observerOptions = {
@@ -62,8 +103,8 @@ const observer = new IntersectionObserver(function(entries) {
     });
 }, observerOptions);
 
-// Observe service cards, portfolio items, and pricing cards
-document.querySelectorAll('.service-card, .portfolio-item, .stat, .pricing-card, .payment-card').forEach(el => {
+// Observe service cards, portfolio items, pricing cards, and script cards
+document.querySelectorAll('.service-card, .portfolio-item, .stat, .pricing-card, .payment-card, .script-card').forEach(el => {
     observer.observe(el);
 });
 
@@ -83,4 +124,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-console.log('Mumchi Production website with payment integration loaded successfully!');
+console.log('Mumchi Production website with pay-to-unlock script system loaded successfully!');
